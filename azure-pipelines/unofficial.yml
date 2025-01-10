@@ -33,6 +33,10 @@ parameters:
   displayName: Include APIScan with compliance tools
   type: boolean
   default: false
+- name: EnableProductionSDL
+  displayName: Enable Production SDL
+  type: boolean
+  default: false
 
 resources:
   repositories:
@@ -51,6 +55,16 @@ extends:
       sourceAnalysisPool: VSEngSS-MicroBuild2022-1ES
       suppression:
         suppressionFile: $(System.DefaultWorkingDirectory)\azure-pipelines\falsepositives.gdnsuppress
+      enableProductionSDL: ${{ parameters.EnableProductionSDL }}
+      codeSignValidation:
+        enabled: ${{ parameters.EnableProductionSDL }}
+        break: true
+        policyFile: $(MBSIGN_APPFOLDER)\CSVTestSignPolicy.xml
+      policheck:
+        enabled: ${{ parameters.EnableProductionSDL }}
+        exclusionsFile: $(System.DefaultWorkingDirectory)\azure-pipelines\PoliCheckExclusions.xml
+      sbom:
+        enabled: ${{ parameters.EnableProductionSDL }}
     stages:
     - stage: Build
       variables:
